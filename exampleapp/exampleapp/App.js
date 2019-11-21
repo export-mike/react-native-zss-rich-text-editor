@@ -1,114 +1,70 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
-import React, {Fragment} from 'react';
+import React, { Component } from 'react';
 import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
+    StyleSheet,
+    View,
+    Platform
 } from 'react-native';
-
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const App = () => {
-  return (
-    <Fragment>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </Fragment>
-  );
-};
+import {Editor, ToolBar, ToolBarStyled} from '@mikeljames/react-native-zss-rich-text-editor';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+// import CustomToolBar from './CustomToolBar';
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#ffffff',
+    paddingTop: 40
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  richText: {
+    alignItems:'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
   },
 });
 
-export default App;
+export default class RichTextExample extends Component {
+
+  constructor(props) {
+    super(props);
+    this.getHTML = this.getHTML.bind(this);
+    this.setFocusHandlers = this.setFocusHandlers.bind(this);
+  }
+
+  onEditorInitialized() {
+    this.setFocusHandlers();
+    this.getHTML();
+  }
+
+  async getHTML() {
+    const titleHtml = await this.richtext.getTitleHtml();
+    const contentHtml = await this.richtext.getContentHtml();
+    // alert(titleHtml + ' ' + contentHtml) //eslint-disable-line
+  }
+
+  setFocusHandlers() {
+    this.richtext.setTitleFocusHandler(() => {
+      //alert('title focus');
+    });
+    this.richtext.setContentFocusHandler(() => {
+      //alert('content focus');
+    });
+  }
+
+  render() {
+    return (
+        <View style={styles.container}>
+          <Editor
+              ref={(r)=>{ this.richtext = r}}
+              style={styles.richText}
+              initialTitleHTML="Title!!"
+              initialContentHTML={'Hello <b>World</b> <p>this is a new paragraph</p> <p>this is another new paragraph</p>'}
+              editorInitializedCallback={() => this.onEditorInitialized()}
+          />
+          <ToolBar getEditor={() => this.richtext}>
+            {props => <ToolBarStyled {...props}/>}
+          </ToolBar>
+          {Platform.OS === 'ios' && <KeyboardSpacer/>}
+        </View>
+    );
+  }
+}
