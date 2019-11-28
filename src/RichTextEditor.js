@@ -337,7 +337,7 @@ export default class RichTextEditor extends Component {
         return;
       }
       this.webRef.injectJavaScript(run);
-    }, 500);
+    }, 50);
   }
   webviewBridge = {
     sendToBridge: json => {
