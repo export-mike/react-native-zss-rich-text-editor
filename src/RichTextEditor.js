@@ -296,6 +296,7 @@ export default class RichTextEditor extends Component {
       <View style={{flex: 1}}>
         <WebView
           {...this.props}
+          originWhitelist={["file://"]}
           hideKeyboardAccessoryView={true}
           keyboardDisplayRequiresUserAction={false}
           ref={(r) => {this.webRef = r}}
